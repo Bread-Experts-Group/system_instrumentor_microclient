@@ -2,7 +2,7 @@ package org.bread_experts_group.windowing
 
 import org.bread_experts_group.debugString
 import org.bread_experts_group.graphics.Graphics
-import org.bread_experts_group.graphics.Win32Graphics
+import org.bread_experts_group.graphics.Win32GraphicsGDI
 import org.bread_experts_group.win32.*
 import java.lang.foreign.*
 import java.lang.invoke.MethodHandles
@@ -116,7 +116,7 @@ class Win32Window(title: String) : Window() {
 			}
 		}
 		sync.await()
-		graphics = Win32Graphics(this, this.windowHandle)
+		graphics = Win32GraphicsGDI(this, this.windowHandle)
 	}
 
 	private fun nativeShow(n: Int) {

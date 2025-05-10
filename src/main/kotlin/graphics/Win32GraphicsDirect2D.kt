@@ -5,7 +5,7 @@ import org.bread_experts_group.windowing.Window
 import java.lang.foreign.*
 import java.lang.invoke.MethodHandle
 
-class Win32Graphics internal constructor(
+class Win32GraphicsDirect2D internal constructor(
 	window: Window,
 	private val windowHandle: MemorySegment
 ) : Graphics(window) {
