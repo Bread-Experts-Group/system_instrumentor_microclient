@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
 	kotlin("jvm") version "2.1.10"
@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-	implementation("org.bread_experts_group:bread_server_lib-code:2.0.3")
+	implementation("org.bread_experts_group:bread_server_lib-code:2.0.7")
 }
 
 tasks.test {
