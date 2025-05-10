@@ -7,8 +7,5 @@ val mainLogger: Logger = Logger.getLogger("Instrumentation Main")
 
 fun main() {
 	val window = Window.create("ばやちゃお")
-	window.graphics
 	window.show()
-	Thread.sleep(15000)
-	window.close()
 }
