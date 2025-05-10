@@ -84,3 +84,23 @@ val nativeUser32GetClientRect: MethodHandle = user32Lookup.getDowncall(
 	ValueLayout.ADDRESS,
 	ValueLayout.ADDRESS
 )
+val nativeUser32BeginPaint: MethodHandle = user32Lookup.getDowncall(
+	linker, "BeginPaint", ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS
+)
+val nativeUser32EndPaint: MethodHandle = user32Lookup.getDowncall(
+	linker, "EndPaint", ValueLayout.JAVA_INT,
+	ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS
+)
+val nativeUser32FillRect: MethodHandle = user32Lookup.getDowncall(
+	linker, "FillRect", ValueLayout.JAVA_INT,
+	ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS
+)
+val nativeUser32GetDC: MethodHandle = user32Lookup.getDowncall(
+	linker, "GetDC", ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS
+)

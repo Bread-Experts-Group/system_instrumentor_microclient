@@ -112,3 +112,10 @@ val d3DColorR: VarHandle = win32D3DColorValue.varHandle(MemoryLayout.PathElement
 val d3DColorG: VarHandle = win32D3DColorValue.varHandle(MemoryLayout.PathElement.groupElement("g"))
 val d3DColorB: VarHandle = win32D3DColorValue.varHandle(MemoryLayout.PathElement.groupElement("b"))
 val d3DColorA: VarHandle = win32D3DColorValue.varHandle(MemoryLayout.PathElement.groupElement("a"))
+
+val win32PaintStruct: StructLayout = MemoryLayout.structLayout(
+	ValueLayout.ADDRESS.withName("hdc"),
+	ValueLayout.JAVA_INT.withName("fErase"),
+	win32Rect.withName("rcPaint"),
+	MemoryLayout.paddingLayout(40)
+)
