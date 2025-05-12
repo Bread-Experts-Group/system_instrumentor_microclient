@@ -33,3 +33,30 @@ val nativeGDI32SetTextColor: MethodHandle = gdi32Lookup.getDowncall(
 	linker, "SetTextColor", ValueLayout.JAVA_INT,
 	ValueLayout.ADDRESS, ValueLayout.JAVA_INT
 )
+val nativeGDI32CreateDIBSection: MethodHandle = gdi32Lookup.getDowncall(
+	linker, "CreateDIBSection", ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT,
+	ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT
+)
+val nativeGDI32CreateCompatibleDC: MethodHandle = gdi32Lookup.getDowncall(
+	linker, "CreateCompatibleDC", ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS
+)
+val nativeGDI32SelectObject: MethodHandle = gdi32Lookup.getDowncall(
+	linker, "SelectObject", ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS, ValueLayout.ADDRESS
+)
+val nativeGDI32GetObjectW: MethodHandle = gdi32Lookup.getDowncall(
+	linker, "GetObjectW", ValueLayout.JAVA_INT,
+	ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS
+)
+val nativeGDI32BitBlt: MethodHandle = gdi32Lookup.getDowncall(
+	linker, "BitBlt", ValueLayout.JAVA_INT,
+	ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
+	ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
+	ValueLayout.JAVA_INT
+)
+val nativeGDI32DeleteDC: MethodHandle = gdi32Lookup.getDowncall(
+	linker, "DeleteDC", ValueLayout.JAVA_INT,
+	ValueLayout.ADDRESS
+)

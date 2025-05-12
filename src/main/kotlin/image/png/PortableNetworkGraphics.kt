@@ -1,0 +1,61 @@
+package org.bread_experts_group.image.png
+
+import org.bread_experts_group.image.RasterImage
+import org.bread_experts_group.image.png.header.ImageDataHeader
+import org.bread_experts_group.image.png.header.ImageFormatHeader
+import org.bread_experts_group.image.png.header.PortableNetworkGraphicsHeader
+import org.bread_experts_group.socket.readString
+import java.io.ByteArrayInputStream
+import java.io.DataInputStream
+
+class PortableNetworkGraphics(from: DataInputStream) : RasterImage() {
+	companion object {
+		val signature = intArrayOf(
+			0x89,
+			0x50,
+			0x4E,
+			0x47,
+			0x0D,
+			0x0A,
+			0x1A,
+			0x0A
+		).map { it.toByte() }.toByteArray()
+	}
+
+	val headers: Array<PortableNetworkGraphicsHeader>
+	val formatHeader: ImageFormatHeader
+	val dataHeader: ImageDataHeader
+
+	init {
+		val newHeaders = mutableListOf<PortableNetworkGraphicsHeader>()
+		if (!from.readNBytes(8).contentEquals(signature))
+			throw ImageParsingException("PNG magic bytes failed verification")
+		var localFormat: ImageFormatHeader? = null
+		var dats = byteArrayOf()
+		while (from.available() > 0) {
+			val length = from.readInt()
+			val name = from.readString(4)
+			if (name == "IDAT") dats += from.readNBytes(length)
+			else {
+				val newHeader = PortableNetworkGraphicsHeader.read(
+					name,
+					DataInputStream(ByteArrayInputStream(from.readNBytes(length)))
+				)
+				if (newHeader != null) {
+					if (name == "IHDR") localFormat = newHeader as ImageFormatHeader
+					else newHeaders.add(newHeader)
+				}
+			}
+			from.skip(4)
+		}
+		formatHeader = localFormat!!
+		dataHeader = ImageDataHeader(formatHeader, ByteArrayInputStream(dats))
+		headers = newHeaders.toTypedArray()
+		println(formatHeader.width)
+	}
+
+	override val width: Int = formatHeader.width
+	override val height: Int = formatHeader.height
+	override val bitDepth: Byte = formatHeader.bitDepth
+	override val data: Array<Array<Array<Byte>>> = dataHeader.pixels
+}

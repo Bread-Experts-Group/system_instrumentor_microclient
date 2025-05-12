@@ -100,7 +100,8 @@ val nativeUser32FillRect: MethodHandle = user32Lookup.getDowncall(
 	ValueLayout.ADDRESS,
 	ValueLayout.ADDRESS
 )
-val nativeUser32GetDC: MethodHandle = user32Lookup.getDowncall(
-	linker, "GetDC", ValueLayout.ADDRESS,
-	ValueLayout.ADDRESS
+val nativeUser32LoadImageW: MethodHandle = user32Lookup.getDowncall(
+	linker, "LoadImageW", ValueLayout.ADDRESS,
+	ValueLayout.ADDRESS, ValueLayout.ADDRESS,
+	ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT
 )

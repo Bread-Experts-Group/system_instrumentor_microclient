@@ -105,8 +105,10 @@ class Win32Window(title: String) : Window() {
 				currentProcessHandle,
 				MemorySegment.NULL
 			) as MemorySegment
-			if (windowHandle == MemorySegment.NULL && checkLastError(this.localArena, this.logger))
+			if (windowHandle.address() == 0L) {
+				checkLastError(this.localArena, this.logger)
 				throw WindowOperationException()
+			}
 			logger.fine { "Window created at handle ${windowHandle.debugString()}" }
 			sync.countDown()
 			val message = this.localArena.allocate(win32Msg)
