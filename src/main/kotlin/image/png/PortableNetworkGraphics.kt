@@ -57,5 +57,6 @@ class PortableNetworkGraphics(from: DataInputStream) : RasterImage() {
 	override val width: Int = formatHeader.width
 	override val height: Int = formatHeader.height
 	override val bitDepth: Byte = formatHeader.bitDepth
+	override val colorType: ImageFormatHeader.ColorType = formatHeader.colorType
 	override val data: Array<Array<Array<Byte>>> = dataHeader.pixels
 }

@@ -23,6 +23,18 @@ class ImageDataHeader(
 
 	val pixels: Array<Array<Array<Byte>>>
 
+	private fun paethPredictor(a: Int, b: Int, c: Int): Int {
+		val p = a + b - c
+		val pa = abs(p - a)
+		val pb = abs(p - b)
+		val pc = abs(p - c)
+		return when {
+			pa <= pb && pa <= pc -> a
+			pb <= pc -> b
+			else -> c
+		}
+	}
+
 	init {
 		if (iHDR.interlaceMethod != ImageFormatHeader.InterlaceMethod.NO_INTERLACE)
 			throw UnsupportedOperationException()
@@ -41,7 +53,12 @@ class ImageDataHeader(
 				repeat(iHDR.width) {
 					val localPixel = when (iHDR.colorType) {
 						ImageFormatHeader.ColorType.RGB_TRIPLET -> when (iHDR.bitDepth.toInt()) {
-							8 -> arrayOf(realStream.readByte(), realStream.readByte(), realStream.readByte())
+							8 -> arrayOf(
+								realStream.readByte(),
+								realStream.readByte(),
+								realStream.readByte()
+							)
+
 							else -> throw UnsupportedOperationException(iHDR.bitDepth.toString())
 						}
 
@@ -49,6 +66,15 @@ class ImageDataHeader(
 							8 -> arrayOf(
 								realStream.readByte(),
 								realStream.readByte(),
+								realStream.readByte(),
+								realStream.readByte()
+							)
+
+							else -> throw UnsupportedOperationException(iHDR.bitDepth.toString())
+						}
+
+						ImageFormatHeader.ColorType.GRAYSCALE_WITH_ALPHA -> when (iHDR.bitDepth.toInt()) {
+							8 -> arrayOf(
 								realStream.readByte(),
 								realStream.readByte()
 							)
@@ -71,7 +97,7 @@ class ImageDataHeader(
 							val topRow = allLines.lastOrNull()
 							val lastPixel = topRow?.get(scanLine.size) ?: empty
 							localPixel.forEachIndexed { i, b ->
-								localPixel[i] = (b + lastPixel[i]).toByte()
+								localPixel[i] = ((b.toInt() and 0xFF) + (lastPixel[i].toInt() and 0xFF)).toByte()
 							}
 						}
 
@@ -80,8 +106,11 @@ class ImageDataHeader(
 							val topPixel = topRow?.get(scanLine.size) ?: empty
 							val leftPixel = scanLine.getOrNull(scanLine.size - 1) ?: empty
 							localPixel.forEachIndexed { i, b ->
-								localPixel[i] = (b + ((leftPixel[i] + topPixel[i]) / 2)).toByte()
-								//    Raw(x-bpp)+Prior(x)
+								val left = leftPixel[i].toInt() and 0xFF
+								val top = topPixel[i].toInt() and 0xFF
+								val avg = (left + top) / 2
+								val raw = b.toInt() and 0xFF
+								localPixel[i] = (raw + avg).toByte()
 							}
 						}
 
@@ -91,16 +120,11 @@ class ImageDataHeader(
 							val topPixel = lastLine?.get(scanLine.size) ?: empty
 							val topLeftPixel = lastLine?.getOrNull(scanLine.size - 1) ?: empty
 							localPixel.forEachIndexed { i, b ->
-								val estimate = leftPixel[i] + topPixel[i] - topLeftPixel[i]
-								val distanceLeft = abs(estimate - leftPixel[i])
-								val distanceTop = abs(estimate - topPixel[i])
-								val distanceTopLeft = abs(estimate - topLeftPixel[i])
-								val predicted = when {
-									distanceLeft <= distanceTop && distanceLeft <= distanceTopLeft -> leftPixel
-									distanceTop <= distanceTopLeft -> topPixel
-									else -> topLeftPixel
-								}[i]
-								localPixel[i] = (b + predicted).toByte()
+								val a = leftPixel[i].toInt() and 0xFF
+								val bVal = topPixel[i].toInt() and 0xFF
+								val c = topLeftPixel[i].toInt() and 0xFF
+								val paeth = paethPredictor(a, bVal, c)
+								localPixel[i] = ((b.toInt() and 0xFF) + paeth).toByte()
 							}
 						}
 					}
